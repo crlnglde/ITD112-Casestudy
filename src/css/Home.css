@@ -1,6 +1,8 @@
 .home {
-    padding: 20px;
+
     flex: 1;
+    height: 100vh;
+    position: relative;
   }
 
   .home h2 {
@@ -14,17 +16,145 @@
   .home-container{
     position: relative;
     text-align: center;
-    /*background: linear-gradient(135deg, #a2b6cc, #3774b5);*/
+
     border-radius: 0px;
-    height: 500px;
+    height: 600px;
     padding: 20px;
     z-index: 1;
 
     gap: 50px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    height: 600px;
+  }
+  
+
+  .background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the container */
   }
 
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, white 30%, transparent);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    justify-content: center;
+  }
+
+  .overlay> h1{
+    padding: 50px 50px 0 50px;
+  }
+
+  .overlay> h3{
+    padding: 0px 50px 0px 50px;
+  }
+  .overlay> p{
+    padding: 0px 50px 50px 50px;
+  }
+
+  .home-row{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+
+    width: 50%;
+    height: 100px;
+    bottom: 80px;
+    z-index: 1;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .home-count-card {
+    background-color: #f1f1f1;
+  
+    padding: 0 0 0 0;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2), 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .hcc-label{
+    background-color:#0f2984;
+    padding: 10px;
+
+    letter-spacing: 2px;
+  }
+
+  .home-count-card label{
+    color: white;
+  }
+
+  .home-count-card p{
+    color: #000000;
+    font-size: 30px;
+    margin: 10px 0 10px 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .home-count-card i{
+    color: #0f2984;
+    margin: 0px 10px 0px 0px;
+    font-size: 20px;
+  }
+
+
+  .home-container1{
+    position: relative;
+    text-align: center;
+
+    border-radius: 0px;
+    height: 100px;
+    padding: 20px;
+    z-index: 1;
+
+    gap: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color:#0f2984;
+  }
+
+  .home-container2{
+    position: relative;
+    text-align: center;
+
+    border-radius: 0px;
+    height: 100px;
+    padding: 20px;
+    z-index: 1;
+
+    gap: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color:#ffffff;
+  }
+
+  
+
+
+
+  
+ /* wala pani */
   .home-pic-main{
     position: relative;
     width: 300px;

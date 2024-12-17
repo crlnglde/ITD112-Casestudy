@@ -24,9 +24,25 @@ const Residents = () => {
   const [contactNumber, setContactNumber] = useState('');
   const [members, setMembers] = useState([""]);
 
+  const [selectedBarangay, setSelectedBarangay] = useState(''); // Filter state
+  
   const [currentPage, setCurrentPage] = useState(1); // State for current page
   const rowsPerPage = 10;
   const totalPages = Math.ceil(residents.length / rowsPerPage);
+
+  const [totalResidents, setTotalResidents] = useState(0);
+  const [totalFamilies, setTotalFamilies] = useState(0);
+
+  //list of barangays
+  const barangays = [
+    'Abuno', 'Acmac-Mariano Badelles Sr.', 'Bagong Silang', 'Bonbonon', 'Bunawan', 'Buru-un', 'Dalipuga',
+    'Del Carmen', 'Digkilaan', 'Ditucalan', 'Dulag', 'Hinaplanon', 'Hindang', 'Kabacsanan', 'Kalilangan',
+    'Kiwalan', 'Lanipao', 'Luinab', 'Mahayahay', 'Mainit', 'Mandulog', 'Maria Cristina', 'Pala-o',
+    'Panoroganan', 'Poblacion', 'Puga-an', 'Rogongon', 'San Miguel', 'San Roque', 'Santa Elena',
+    'Santa Filomena', 'Santiago', 'Santo Rosario', 'Saray', 'Suarez', 'Tambacan', 'Tibanga', 'Tipanoy',
+    'Tomas L. Cabili (Tominobo Proper)', 'Upper Tominobo', 'Tubod', 'Ubaldo Laya', 'Upper Hinaplanon',
+    'Villa Verde'
+  ];
 
   //CSV Upload
   const handleFileChange = (event) => {
@@ -183,14 +199,25 @@ const Residents = () => {
       try {
         const querySnapshot = await getDocs(collection(db, "bgy-Residents"));
         const residentsData = querySnapshot.docs.map(doc => doc.data());
-        setResidents(residentsData);  // Store data in state
+        setResidents(residentsData); 
+
+        // Calculate total residents and total families
+        const total = residentsData.reduce((sum, resident) => {
+          return sum + 1 + resident.FamilyMembers.length;
+        }, 0);
+        setTotalResidents(total);
+
+        // Calculate total families (unique family heads)
+        const families = new Set(residentsData.map(resident => resident.FamilyHead));
+        setTotalFamilies(families.size);
       } catch (error) {
         console.error("Error fetching residents data:", error);
       }
     };
 
-    fetchResidents();  // Call the function to fetch data
+    fetchResidents();  // Call function to fetch data
   }, []);
+  
 
   //Page ni
   const handleNext = () => {
@@ -205,10 +232,40 @@ const Residents = () => {
     }
   };
 
-  const displayResidents = residents.slice(
+  const filteredResidents = residents.filter(resident => {
+    if (selectedBarangay) {
+      return resident.Barangay === selectedBarangay;
+    }
+    return true; 
+  });
+
+  const handleFilterChange = (event) => {
+    setSelectedBarangay(event.target.value); // Update selected barangay
+  };
+
+  useEffect(() => {
+    const totalFilteredResidents = filteredResidents.reduce((sum, resident) => {
+      return sum + 1 + resident.FamilyMembers.length;
+    }, 0);
+    setTotalResidents(totalFilteredResidents);
+
+    const familiesSet = new Set(filteredResidents.map(resident => resident.FamilyHead));
+    setTotalFamilies(familiesSet.size);
+  }, [selectedBarangay, residents]);
+  
+  const displayResidents = filteredResidents.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+
+  const residentCount = selectedBarangay
+  ? filteredResidents.length
+  : residents.length;
+  
+  {/*const displayResidents = residents.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );*/}
 
   const handleAddMember = () => {
     setMembers([...members, ""]); // Add a new empty member field when "Add More Member" is clicked
@@ -260,7 +317,48 @@ const Residents = () => {
 
       </div>
 
+      
+
       <div className="residents-container">
+
+        {/* Filter Dropdown */}
+        <div className="res-top-row">
+
+          <div className="res-top-col">
+            <div className="resident-count-card">
+              <div className="rcc-label">
+                <label>Total Residents</label>
+              </div>
+
+              <p><i className="fa-solid fa-people-group"></i>{totalResidents}</p>
+            </div>
+
+            <div className="resident-count-card">
+              <div className="rcc-label">
+                <label>Total Families</label>
+              </div>
+              
+              <p><i className="fa-solid fa-people-roof"></i>{residentCount}</p>
+            </div>
+          </div>
+    
+          <div className="res-filter-container">
+            <label htmlFor="barangayFilter"><i className="fa-solid fa-filter"></i> Filter: </label>
+            <select
+              id="barangayFilter"
+              value={selectedBarangay}
+              onChange={handleFilterChange}
+            >
+              <option value="">All Barangays</option>
+              {barangays.map((barangay, index) => (
+                <option key={index} value={barangay}>
+                  {barangay}
+                </option>
+              ))}
+            </select>
+          </div>
+
+        </div>
 
         <div className="residents-table">
           <table>
@@ -299,9 +397,9 @@ const Residents = () => {
           
         </div>
 
-        <div class="res-button-container">
+        <div className="res-button-container">
           <button 
-            class="nav-button prev" 
+            className="nav-button prev" 
             onClick={handlePrev}
             disabled={currentPage === 1}
           >
@@ -309,7 +407,7 @@ const Residents = () => {
           </button>
 
           <button 
-            class="nav-button next" 
+            className="nav-button next" 
             onClick={handleNext}
             disabled={currentPage === totalPages}
           >
@@ -322,10 +420,7 @@ const Residents = () => {
 
       {isModalOpen && (
         <div className="modal-overlay" onClick={handleCloseModal}>
-          <div
-            className="res-modal"
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
-          >
+          <div className="res-modal" onClick={(e) => e.stopPropagation()} >
             <button className="modal-close-btn" onClick={handleCloseModal}>
               ×
             </button>

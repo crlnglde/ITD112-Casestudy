@@ -67,14 +67,105 @@
   .residents-container{
     background-color: white;
     border-collapse: collapse;
-    height: 500px;
-    
+    height: 600px;
     display: flex;
     flex-direction: column;
 
     justify-content: space-between; /* Distribute space between form content and the footer */
     box-sizing: border-box;
   }
+
+  .res-top-row{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 20px 0 20px;
+    align-items: flex-start;
+  }
+
+  .res-top-col{
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 20px 0 20px;
+    align-items: flex-start;
+    gap: 20px;
+  }
+      .res-filter-container {
+        margin-bottom: 20px;
+        font-size: 1.1em;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        gap: 10px;
+        padding: 0 10px 0 10px;
+      }
+      
+      .res-filter-container label {
+        font-weight: bold;
+      }
+      
+      .res-filter-container select {
+        padding: 8px 12px;
+        font-size: 15px;
+        border: none;
+        outline: none;
+        background-color: #fff;
+        transition: border-color 0.3s ease;
+      }
+
+      .res-filter-container option {
+        padding: 8px 12px;
+        font-size: 15px;
+        border: none;
+        outline: none;
+        background-color: #fff;
+        transition: border-color 0.3s ease;
+      }
+      
+      
+      .res-filter-container select:focus {
+        border-color: #0056b3;
+      }
+      
+      .res-filter-container select option {
+        padding: 10px;
+      }
+      
+      .resident-count-card {
+        background-color: #f1f1f1;
+        border-radius: 8px;
+        padding: 0 0 0 0;
+        text-align: center;
+        font-size: 1.2em;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .rcc-label{
+        background-color:#0f2984;
+        padding: 10px;
+        border-radius: 8px 8px 0 0;
+        letter-spacing: 2px;
+      }
+
+      .resident-count-card label{
+        color: white;
+      }
+
+      .resident-count-card p{
+        color: #000000;
+        font-size: 30px;
+        margin: 10px 0 10px 0;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .resident-count-card i{
+        color: #0f2984;
+        margin: 0px 10px 0px 0px;
+        font-size: 20px;
+      }
+  
   
   .residents-table{
     padding: 20px;
@@ -135,7 +226,7 @@
     display: flex;
     justify-content: center;
     gap: 46px;
-    padding: 20px;
+    padding: 0 20px 20px 20px;
   }
 
   .nav-button {

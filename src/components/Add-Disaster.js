@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom'; 
 
 import { db } from "../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc, setDoc, doc  } from "firebase/firestore";
+
 
 import "../css/Add-Disaster.css";
 import DstrGif from "../pic/disaster.gif"
@@ -11,23 +12,38 @@ const AddDisaster = () => {
     const [step, setStep] = useState(1);
     const navigate = useNavigate();  
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalType, setModalType] = useState(""); 
 
-    const [disasterType, setDisasterType] = useState(""); 
-    const [date, setDate] = useState(""); 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalType, setModalType] = useState("");
+
+
+    const [disasterType, setDisasterType] = useState("");
+    const [date, setDate] = useState("");
     const [selectedBarangays, setSelectedBarangays] = useState([]);
 
-    const [activeBarangay, setActiveBarangay] = useState(null); 
+
+    const [activeBarangay, setActiveBarangay] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const [hasClickedNext, setHasClickedNext] = useState(false);
 
+
     const [barangayData, setBarangayData] = useState({});// To store all collected data per barangay
+
 
     const [residents, setResidents] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
 
+
+    //new
+    const [disasterCode] = useState(`D-${Date.now()}`);
+    //new
+    const [activeResident, setActiveResident] = useState(null);
+    const handleResidentSelect = (resident) => {
+        setActiveResident(resident); // Set the active resident
+        handleOpenModal("add"); // Open the modal with "add" type
+    };
+   
     const handleOpenModal = (type) => {
         setModalType(type);
         setIsModalOpen(true);
@@ -39,57 +55,62 @@ const AddDisaster = () => {
         if (step > 1) {
             setStep(step - 1);
         } else {
-            navigate(-1);   
+            navigate(-1);  
         }
     };
 
     const validateFields = () => {
         const missingFields = [];
 
+
         if (!disasterType) missingFields.push("Disaster Type");
         if (!date) missingFields.push("Date");
         if (selectedBarangays.length === 0) missingFields.push("at least one Barangay");
 
+
         if (missingFields.length > 0) {
             setErrorMessage(`Please fill all the fields: ${missingFields.join(", ")}`);
-            return false; 
+            return false;
         } else {
             setErrorMessage(""); // Clear error message if all fields are filled
             return true;
         }
     };
 
+
     const handleNextClick = (e) => {
-        e.preventDefault(); 
-        
+        e.preventDefault();
+       
         // On first click, set isSubmitted to true to trigger validation
         setHasClickedNext(true);
+
 
         // Check if all required fields are filled
         const isValid = validateFields();
 
+
         if (isValid) {
             setStep(2);
         }
-
     };
 
     const handleDisasterTypeChange = (e) => {
         setDisasterType(e.target.value);
         if (hasClickedNext) {
-            validateFields(); 
+            validateFields();
         }
     };
 
     const handleDateChange = (e) => {
         setDate(e.target.value);
         if (hasClickedNext) {
-            validateFields(); 
+            validateFields();
         }
     };
 
     const handleCheckboxChange = (e) => {
         const { value, checked } = e.target;
+
 
         if (checked) {
             setSelectedBarangays((prev) => [...prev, value]); // Add to selected list
@@ -97,13 +118,13 @@ const AddDisaster = () => {
             setSelectedBarangays((prev) => prev.filter((barangay) => barangay !== value)); // Remove from selected list
         }
         if (hasClickedNext) {
-            validateFields(); 
+            validateFields();
         }
     };
 
     const handleBarangayClick = (barangay) => {
         console.log(`Barangay clicked: ${barangay}`);
-    
+   
         if (barangay === activeBarangay) {
             setActiveBarangay(null); // Deselect the active barangay
             fetchResidents(barangay);
@@ -112,17 +133,27 @@ const AddDisaster = () => {
             fetchResidents(barangay); // Fetch residents for the active barangay
         }
     };
-    
-    // Load saved selections from localStorage on component mount
+
+// Load saved selections from localStorage on component mount
+    //modified
     useEffect(() => {
-        const savedSelections = JSON.parse(localStorage.getItem('selectedBarangays')) || [];
-        setSelectedBarangays(savedSelections);
-    }, []);
+        // Store all disaster information including the unique disaster code
+        const disasterData = {
+            disasterCode,
+            disasterType,
+            date,
+            selectedBarangays
+        };
+        localStorage.setItem('disasterData', JSON.stringify(disasterData));  // Store all relevant data
+        console.log('Disaster Data saved to localStorage:', disasterData);
+    }, [disasterCode, disasterType, date, selectedBarangays]);
+
 
     // Save selected barangays to localStorage whenever they change
     useEffect(() => {
         localStorage.setItem('selectedBarangays', JSON.stringify(selectedBarangays));
     }, [selectedBarangays]);
+
 
     useEffect(() => {
         if (hasClickedNext) validateFields();
@@ -131,75 +162,83 @@ const AddDisaster = () => {
     const Step1 = (
         <form className="add-form">
 
+
             <div className="add-form-h2">
                 <h2>Disaster Information</h2>
             </div>
-            
+           
             <div className="dstr-rows">
+
 
                 <div className="dstr-cols1">
                     <div className="dstr-image-container">
                         <img src={DstrGif} alt="Disaster Animation" className="gif-image" />
                     
-                        <div className="text-overlay">
+                        <div className="ad-text-overlay">
                             <h2>Stay Prepared!</h2>
                             <p>Always be ready for the unexpected.</p>
                         </div>
                     </div>
                 </div>
 
+
                 <div className="dstr-cols2">
+
 
                     <div className="dstr-pop-form">
                         <div className="dstr-form-group">
                             <div className="dstr-input-group">
                                 <span className="icon"><i className="fa-solid fa-hurricane"></i></span>
-                                
-                                <select 
+                               
+                                <select
                                     id="disaster-select" value={disasterType}
-                                    onChange={handleDisasterTypeChange} required 
+                                    onChange={handleDisasterTypeChange} required
                                 >
-
+                                {/** modified */}
                                 <option value="" disabled selected>Disaster Type</option>
-                                <option value="typhoon">Typhoon</option>
-                                <option value="fire-incident">Fire Incident</option>
-                                <option value="earthquake">Earthquake</option>
-                                <option value="flood">Flood</option>
-                                <option value="landslide">Landslide</option>
+                                <option value="Typhoon">Typhoon</option>
+                                <option value="Fire Incident">Fire Incident</option>
+                                <option value="Earthquake">Earthquake</option>
+                                <option value="Flood">Flood</option>
+                                <option value="Landslide">Landslide</option>
                                 </select>
                             </div>
                         </div>
 
+
                         <div className="dstr-form-group">
                             <div className="dstr-input-group">
                                 <span className="icon"><i className="fa-regular fa-calendar-days"></i></span>
-                                
-                                <input 
+                               
+                                <input
                                     type="date" placeholder="Date" value={date}
-                                    onChange={handleDateChange} required 
+                                    onChange={handleDateChange} required
                                 />
                             </div>
                         </div>
                     </div>
 
+
                     <div className="dstr-pop-form1">
 
+
                         <div className="dstr-form-group">
-                        
+                       
                             <div className="ig">
                                 <span className="icon"><i className="fa-solid fa-location-dot"></i></span>
                                 <label  htmlFor="barangay-select">Barangay (Affected Areas)</label>
                             </div>
 
+
                             <div className="bgy-input-group">
                                 <div className="checkbox-group">
                                     {[
-                                    'Abuno', 'Acmac-Mariano Badelles Sr.', 'Bagong Silang', 'Bonbonon', 'Bunawan', 'Buru-un', 'Dalipuga', 
-                                    'Del Carmen', 'Digkilaan', 'Ditucalan', 'Dulag', 'Hinaplanon', 'Hindang', 'Kabacsanan', 'Kalilangan', 
-                                    'Kiwalan', 'Lanipao', 'Luinab', 'Mahayahay', 'Mainit', 'Mandulog', 'Maria Cristina', 'Pala-o', 
-                                    'Panoroganan', 'Poblacion', 'Puga-an', 'Rogongon', 'San Miguel', 'San Roque', 'Santa Elena', 
-                                    'Santa Filomena', 'Santiago', 'Santo Rosario', 'Saray', 'Suarez', 'Tambacan', 'Tibanga', 'Tipanoy', 
-                                    'Tomas L. Cabili (Tominobo Proper)', 'Upper Tominobo', 'Tubod', 'Ubaldo Laya', 'Upper Hinaplanon', 
+                                    'Abuno', 'Acmac-Mariano Badelles Sr.', 'Bagong Silang', 'Bonbonon', 'Bunawan', 'Buru-un', 'Dalipuga',
+                                    'Del Carmen', 'Digkilaan', 'Ditucalan', 'Dulag', 'Hinaplanon', 'Hindang', 'Kabacsanan', 'Kalilangan',
+                                    'Kiwalan', 'Lanipao', 'Luinab', 'Mahayahay', 'Mainit', 'Mandulog', 'Maria Cristina', 'Pala-o',
+                                    'Panoroganan', 'Poblacion', 'Puga-an', 'Rogongon', 'San Miguel', 'San Roque', 'Santa Elena',
+                                    'Santa Filomena', 'Santiago', 'Santo Rosario', 'Saray', 'Suarez', 'Tambacan', 'Tibanga', 'Tipanoy',
+                                    'Tomas L. Cabili (Tominobo Proper)', 'Upper Tominobo', 'Tubod', 'Ubaldo Laya', 'Upper Hinaplanon',
                                     'Villa Verde'
                                     ].map((barangay) => (
                                     <div key={barangay} className="checkbox-item">
@@ -219,7 +258,9 @@ const AddDisaster = () => {
                         </div>
                     </div>
 
+
                     {errorMessage && <p className="error-message">{errorMessage}</p>}
+
 
                     <div className="dstr-btn">
                         <button type="submit" className="dstr-submit-btn" onClick={handleNextClick}>
@@ -227,11 +268,118 @@ const AddDisaster = () => {
                         </button>
                     </div>
 
+
                 </div>
             </div>
-        
-        </form> 
+       
+        </form>
     );
+
+     //modified
+     const handleFinalSubmit = async () => {
+        // Retrieve disasterData and residentData from localStorage
+        const disasterData = JSON.parse(localStorage.getItem("disasterData")) || null;
+        const residentData = JSON.parse(localStorage.getItem("residentData")) || [];
+   
+        if (!disasterData || residentData.length === 0) {
+            alert("No data found in localStorage to save.");
+            return;
+        }
+   
+        try {
+   
+            // Extract other disaster-related fields from disasterData
+            const { disasterCode, disasterType, date } = disasterData;
+
+            // Group residentData by Barangay
+            const groupedByBarangay = residentData.reduce((acc, resident) => {
+                const barangay = resident.brgy || "Unknown Barangay";
+                if (!acc[barangay]) {
+                    acc[barangay] = [];
+                }
+                acc[barangay].push(resident);
+                return acc;
+            }, {});
+
+
+            // Loop through each barangay and save its data
+            for (const barangayName in groupedByBarangay) {
+                const barangayResidents = groupedByBarangay[barangayName];
+   
+                // Calculate summary information for this barangay
+                let affectedFamilies = barangayResidents.length;
+                let affectedPersons = 0;
+                let familiesInEC = 0;
+                let sexBreakdown = { male: 0, female: 0 };
+                let pregnantWomen = 0;
+                let lactatingMothers = 0;
+                let pwds = 0;
+                let soloParents = 0;
+                let indigenousPeoples = 0;
+                let assistanceNeeded = [];
+                let contact = `09${Math.floor(100000000 + Math.random() * 900000000)}`; // Generate random contact number
+   
+                barangayResidents.forEach((resident) => {
+                    affectedPersons += resident.sexBreakdown.male + resident.sexBreakdown.female;
+                    sexBreakdown.male += resident.sexBreakdown.male || 0;
+                    sexBreakdown.female += resident.sexBreakdown.female || 0;
+                    if (resident.familiesInsideECs === "yes") familiesInEC += 1;
+                    pregnantWomen += resident.pregnantWomen || 0;
+                    lactatingMothers += resident.lactatingMothers || 0;
+                    pwds += resident.pwds || 0;
+                    soloParents += resident.soloParents || 0;
+                    indigenousPeoples += resident.indigenousPeoples || 0;
+                    if (resident.servicesNeeded) assistanceNeeded.push(resident.servicesNeeded);
+                });
+                const sexBreakdownSummary = `Male: ${sexBreakdown.male}, Female: ${sexBreakdown.female}`;
+                console.log("sex breakdown", sexBreakdownSummary )
+                // Prepare the document structure for the barangay collection
+                const barangayDocument = {
+                    DisasterCode: disasterCode,
+                    DisasterType: disasterType,
+                    DisasterDate: date,
+                    Residents: barangayResidents, // Save resident data for the barangay
+                };
+   
+                // Save detailed data to the Barangay collection
+                const barangayCollectionRef = collection(db, barangayName);
+                const disasterDocRef = doc(barangayCollectionRef, disasterCode);
+                await setDoc(disasterDocRef, barangayDocument);
+   
+                // Prepare summary data for the data collection
+                const barangaySummaryData = {
+                    disasterCode,
+                    disasterDate: date,
+                    disasterType,
+                    barangays: barangayName,
+                    affectedFamilies,
+                    affectedPersons,
+                    familiesInEC,
+                    sexBreakdown: sexBreakdownSummary,
+                    pregnantWomen,
+                    lactatingMothers,
+                    pwds,
+                    soloParents,
+                    indigenousPeoples,
+                    assistanceNeeded: [...new Set(assistanceNeeded)].join(", "), // Remove duplicates
+                    contact,
+                };
+   
+                // Save the summary data for this barangay to the `data` collection
+                const dataDocRef = doc(collection(db, "disasters"), `${disasterCode}-${barangayName}`);
+                await setDoc(dataDocRef, barangaySummaryData);
+            }
+
+
+            alert("All data has been successfully stored in the database!");
+   
+            // Clear localStorage (optional)
+            localStorage.removeItem("residentData");
+        } catch (error) {
+            console.error("Error saving data to database:", error);
+            alert("An error occurred while saving data. Please try again.");
+        }
+    };
 
     const Step2 = (
         <div className="residents-table">
@@ -246,6 +394,7 @@ const AddDisaster = () => {
                     </button>
                 ))}
             </div>
+
 
             {activeBarangay && (
                 <div>
@@ -276,10 +425,12 @@ const AddDisaster = () => {
                                         <td>{resident.ContactNumber}</td>
                                         <td>{Array.isArray(resident.FamilyMembers) ? resident.FamilyMembers.join(", ") : "No family members"}</td>
 
+
                                         <td>
-                                            <button onClick={() => handleOpenModal("add", resident)}>
-                                                Answer
-                                            </button>
+                                            
+                                        <button className="res-submit-btn" onClick={() => handleResidentSelect(resident)}>
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
                                         </td>
                                     </tr>
                                 ))}
@@ -288,6 +439,18 @@ const AddDisaster = () => {
                     ) : (
                         <p>No residents found for {activeBarangay}.</p>
                     )}
+
+
+                    {/*new*/}
+                    <div className="dstr-bgay-btn">
+
+                        <button className="bgy-submit-btn" onClick={handleFinalSubmit} >
+                            <i class="fa-solid fa-floppy-disk"></i>Submit
+                        </button>
+
+                    </div>
+
+                    
                 </div>
             )}
         </div>
@@ -300,26 +463,26 @@ const AddDisaster = () => {
             console.warn("No barangay provided for fetching residents.");
             return; // Early exit if no barangay is active
         }
-    
+   
         setIsLoading(true);
         setError(""); // Clear previous errors
-        
+       
         console.log(barangay);
         try {
             const q = query(collection(db, "bgy-Residents"), where("Barangay", "==", barangay));
             const querySnapshot = await getDocs(q);
-    
+   
             if (querySnapshot.empty) {
                 console.log(`No residents found for '${barangay}'`);
                 setError(`No residents found for '${barangay}'`);
                 return;
             }
-    
+   
             const residentsData = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
             }));
-    
+   
             console.log("Residents fetched successfully:", residentsData);
             setResidents(residentsData);
         } catch (err) {
@@ -329,19 +492,19 @@ const AddDisaster = () => {
             setIsLoading(false);
         }
     };
-    
-
+   
     useEffect(() => {
         if (activeBarangay) {
             const a= fetchResidents(activeBarangay);
             console.log(a);
         }
     }, [activeBarangay]);
-    
+    //remove
      // Function to handle form submission in the modal
      const handleFormSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
+
 
         const data = {
             familiesInsideECs: formData.get("familiesInsideECs"),
@@ -357,30 +520,70 @@ const AddDisaster = () => {
             campManagerContact: formData.get("campManagerContact") || "",
         };
 
+
         setBarangayData((prev) => ({
             ...prev,
             [activeBarangay]: data
         }));
 
+
         handleCloseModal();
     };
+   
 
-    const handleFinalSubmit = () => {
-        const totalData = selectedBarangays.map((barangay) => ({
-            barangay,
-            ...barangayData[barangay]
-        }));
-
-        const disasterData = {
-            disasterType,
-            date,
-            totalBarangays: selectedBarangays.length,
-            totalData,
+    //new
+    //magstore sa affected sa data sa each barangay
+    const handleFamilySubmit = (e) => {
+        e.preventDefault(); // Prevent default form submission
+   
+        // Collect form data
+        const newFamilyData = {
+            familyId: e.target.familyId?.value || "", // Family ID
+            brgy: e.target.brgy?.value || "", // Family ID
+            familiesInsideECs: e.target.familiesInsideECs?.value || "no", // Yes or No
+            sexBreakdown: {
+                male: Number(e.target.maleCount?.value || 0), // Male count
+                female: Number(e.target.femaleCount?.value || 0), // Female count
+            },
+            pregnantWomen: Number(e.target.pregnantWomen?.value || 0), // Pregnant women count
+            lactatingMothers: Number(e.target.lactatingMothers?.value || 0), // Lactating mothers count
+            pwds: Number(e.target.pwds?.value || 0), // PWD count
+            soloParents: Number(e.target.soloParents?.value || 0), // Solo parents count
+            indigenousPeoples: Number(e.target.indigenousPeoples?.value || 0), // Indigenous Peoples count
+            campManagerContact: e.target.contactNumber?.value || "", // Contact number
+            servicesNeeded: e.target.fniServicesNeeded?.value || "", // Services needed
         };
-
-        console.log("Disaster Data: ", disasterData);
-        alert("Data saved successfully!");
+   
+        // Retrieve existing data from localStorage, default to an empty array if no data exists
+        const existingData = JSON.parse(localStorage.getItem("residentData")) || [];
+   
+        if (!Array.isArray(existingData)) {
+            console.error("Invalid data format in localStorage: resetting to an empty array.");
+            localStorage.setItem("residentData", JSON.stringify([])); // Reset invalid data
+            return;
+        }
+   
+        // Add the new family data to the existing array
+        const updatedData = [...existingData, newFamilyData];
+   
+        // Save the updated data back to localStorage
+        localStorage.setItem("residentData", JSON.stringify(updatedData));
+   
+        console.log("Updated family data:", updatedData);
+        alert("Family information saved successfully!");
+   
+        // Optional: Reset the form or close the modal
+        handleCloseModal();
     };
+   
+    //new
+    const savedData = JSON.parse(localStorage.getItem('residentData'));
+        if (savedData) {
+            console.log("Retrieved resident data from localStorage:", savedData);
+        } else {
+            console.log("No resident data found in localStorage.");
+        }
+
 
   return (
     <div className="dstr-dashboard">
@@ -418,21 +621,27 @@ const AddDisaster = () => {
                                     <h2>Resident Status</h2>
                                 </div>
                                 
-                                <form className="add-form">
-                                    <label>Family Head</label>
+                                <form className="add-form" onSubmit={handleFamilySubmit}>
+                                   
 
                                     {/*barangay-purok */}
                                     <div className="dstr-bgy-pop-form">
+                                        
                                         <div className="form-group">
+                                        <label>Family ID</label>
                                             <div className="dstr-bgy-input-group">
                                                 <span className="icon"><i className="fa-solid fa-location-dot"></i></span>
-                                                <input type="text" placeholder="Barangay" required />
+                                                <input type="text" placeholder="ID" name="familyId" value={activeResident.id} readOnly/>
+
                                             </div>
                                         </div>
+
+                                        
                                         <div className="form-group">
+                                        <label>Barangay</label>
                                             <div className="dstr-bgy-input-group">
                                                 <span className="icon"><i className="fa-solid fa-road"></i></span>
-                                                <input type="text" placeholder="Purok" required />
+                                                <input type="text" placeholder="brgy" name="brgy" value={activeResident.Barangay} readOnly/>
                                             </div>
                                         </div>
                                     </div>
@@ -480,14 +689,15 @@ const AddDisaster = () => {
                                         <div className="form-group">
                                             <label>Number of Pregnant Women</label>
                                             <div className="dstr-bgy-input-group">
-                                                <input type="number" placeholder="0" min="0" required />
+                                                <input type="number" name="pregnantWomen" placeholder="0" min="0" required />
                                             </div>
                                         </div>
 
                                         <div className="form-group">
                                             <label>Number of Lactating Mothers</label>
                                             <div className="dstr-bgy-input-group">
-                                                <input type="number" placeholder="0" min="0" required />
+                                                <input type="number" name="lactatingMothers" placeholder="0" min="0" required />
+
                                             </div>
                                         </div>
                                     </div>
@@ -498,14 +708,16 @@ const AddDisaster = () => {
                                         <div className="form-group">
                                             <label>Number of PWDs</label>
                                             <div className="dstr-bgy-input-group">
-                                                <input type="number" placeholder="0" min="0" required />
+                                                <input type="number" name="pwds" placeholder="0" min="0" required />
+
                                             </div>
                                         </div>
 
                                         <div className="form-group">
                                             <label>Number of Solo Parents</label>
                                             <div className="dstr-bgy-input-group">
-                                            <input type="number" placeholder="0" min="0" required />
+                                                <input type="number" name="soloParents" placeholder="0" min="0" required />
+
                                             </div>
                                         </div>
                                     </div>
@@ -516,14 +728,8 @@ const AddDisaster = () => {
                                         <div className="form-group">
                                             <label>Number of Indigenous Peoples</label>
                                             <div className="dstr-bgy-input-group">
-                                            <input type="number" placeholder="0" min="0" required />
-                                            </div>
-                                        </div>
+                                                <input type="number" name="indigenousPeoples" placeholder="0" min="0" required />
 
-                                        <div className="form-group">
-                                            <label>IDPs Place of Origin</label>
-                                            <div className="dstr-bgy-input-group">
-                                                <input type="text" placeholder="Place of Origin" required />
                                             </div>
                                         </div>
                                     </div>
@@ -533,7 +739,8 @@ const AddDisaster = () => {
                                         <div className="form-group">
                                             <label>FNI Services Needed</label>
                                             <div className="dstr-bgy-input-group">
-                                                <textarea placeholder="Describe services needed" rows="3" required></textarea>
+                                                <textarea name="fniServicesNeeded" placeholder="Describe services needed" rows="3" required></textarea>
+
                                             </div>
                                         </div>
 
