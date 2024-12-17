@@ -46,8 +46,7 @@ useEffect(() => {
       setTotalResidents(total);
 
       // Calculate total families 
-      const totalFamilies = residents.length;
-      setTotalFamilies(totalFamilies);
+      setTotalFamilies(residents.length);
 
     } catch (error) {
       console.error("Error fetching residents data:", error);
