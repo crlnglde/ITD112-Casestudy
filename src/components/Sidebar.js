@@ -2,9 +2,10 @@ import React,  { useState, useEffect  } from "react";
 import { useLocation } from "react-router-dom";
 
 import "../css/Sidebar.css";
-import Maxlogo from '../pic/logo-max.png'
-import Minlogo from '../pic/logo-min.png'
+import Maxlogo from '../pic/logo-max1.png'
+import Minlogo from '../pic/logo-min1.png'
 import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 const Sidebar = ({isMinimized, setIsMinimized}) => {
   const location = useLocation();
@@ -35,7 +36,12 @@ const Sidebar = ({isMinimized, setIsMinimized}) => {
         {isMinimizedState ? (
             <img src={Minlogo} alt="Logo Minimized" />
           ) : (
-            <img src={Maxlogo} alt="Logo Maximized" className="logo-image" />
+
+            <div className="logo-container">
+              <img src={Minlogo} alt="Logo Maximized" className="logo-image" />
+              <h3>isas<span>Track</span></h3>
+            </div>
+            
           )}
         
 
@@ -73,7 +79,7 @@ const Sidebar = ({isMinimized, setIsMinimized}) => {
             </a>
           </li>
 
-          <li>
+          {/*<li>
             <a
               href="/reports"
               className={isActive("/reports") ? "active" : ""}
@@ -81,7 +87,7 @@ const Sidebar = ({isMinimized, setIsMinimized}) => {
             <i className="fa-solid fa-folder-open"></i>
             {!isMinimizedState && <span>Reports</span>}
             </a>
-          </li>
+          </li>*/}
 
           <li >
             <a
@@ -93,7 +99,7 @@ const Sidebar = ({isMinimized, setIsMinimized}) => {
             </a>
           </li>
 
-          <li>
+          {/*<li>
             <a
               href="/volunteers"
               className={isActive("/volunteers") ? "active" : ""}
@@ -101,7 +107,7 @@ const Sidebar = ({isMinimized, setIsMinimized}) => {
             <i className="fa-solid fa-handshake-angle"></i>
             {!isMinimizedState && <span>Volunteers</span>}
             </a>
-          </li>
+          </li>*/}
         </ul>
 
         <div className={`user-section ${isMinimizedState ? "minimized" : ""}`}>

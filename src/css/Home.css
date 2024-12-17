@@ -50,15 +50,19 @@
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
-    justify-content: center;
+
   }
 
   .overlay> h1{
     padding: 50px 50px 0 50px;
+    position: relative;
+    top: 110px;
   }
 
   .overlay> h3{
     padding: 0px 50px 0px 50px;
+    position: relative;
+    top: 110px;
   }
   .overlay> p{
     padding: 0px 50px 50px 50px;
@@ -68,42 +72,40 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+
     position: relative;
 
-    width: 50%;
     height: 100px;
-    bottom: 80px;
+    bottom: 40px;
     z-index: 1;
-    padding: 20px;
-    border-radius: 10px;
+    box-shadow: 4px 20px 20px 6px rgba(255, 255, 255, 0.32), 0px 2px 4px rgba(67, 67, 67, 0.1);
   }
   
   .home-count-card {
     background-color: #f1f1f1;
   
-    padding: 0 0 0 0;
+    padding: 20px 30px 20px 30px;
     text-align: center;
     font-size: 1.2em;
     font-weight: bold;
-    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2), 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease; 
   }
 
   .hcc-label{
-    background-color:#0f2984;
+    background-color:#0f288400;
     padding: 10px;
 
     letter-spacing: 2px;
   }
 
   .home-count-card label{
-    color: white;
+    color: rgb(0, 0, 0);
   }
 
   .home-count-card p{
     color: #000000;
     font-size: 30px;
-    margin: 10px 0 10px 0;
+    margin: 0px 0 0px 0;
     text-align: center;
     display: flex;
     justify-content: center;
@@ -113,8 +115,20 @@
   .home-count-card i{
     color: #0f2984;
     margin: 0px 10px 0px 0px;
-    font-size: 20px;
+    font-size: 30px;
   }
+
+  .home-count-card:hover {
+    background-color: #395cb7; /* Change background color on hover */
+    transform: scale(1.05);   /* Slightly zoom the box */
+    cursor: pointer;          /* Add pointer cursor on hover */
+}
+
+.home-count-card:hover i,
+.home-count-card:hover p,
+.home-count-card:hover label{
+  color: white;
+}
 
 
   .home-container1{
@@ -130,7 +144,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    background-color:#0f2984;
+    background-color:#0a194e;
   }
 
   .home-container2{
@@ -138,7 +152,7 @@
     text-align: center;
 
     border-radius: 0px;
-    height: 100px;
+    height: 100%;
     padding: 20px;
     z-index: 1;
 
@@ -149,8 +163,18 @@
     background-color:#ffffff;
   }
 
-  
-
+  .home-text-overlay {
+    position: relative;
+    top:1%; 
+    
+    background-color: rgb(10 25 78 / 69%);
+    color: white;
+    padding: 20px;
+    border-radius: 0px 0px 20px 20px;
+    text-align: left;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    height: 100px;
+  }
 
 
   

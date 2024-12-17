@@ -90,23 +90,23 @@
     
     background-color: rgb(10 25 78 / 69%);
     color: white;
-    padding: 20px 0px 20px 50px;
+    padding: 20px;
     border-radius: 0px 0px 20px 20px;
     text-align: left;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-
+    height: 100px;
   }
 
   .bar-text-overlay h2 {
     margin: 0; 
-    font-size: 1.5em; 
+    font-size: 15px;  
     color: white;
     padding: 0;
 }
 
 .bar-text-overlay p {
-    margin: 5px 0 0;
-    font-size: 1em;
+    margin: 10px 0 0;
+    font-size: 15px; 
     color: white;
 }
   

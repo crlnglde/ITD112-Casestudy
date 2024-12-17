@@ -220,7 +220,9 @@ const Dashboard = () => {
       <div className="dashboard-container">
 
         <div className="disasters-visualizations">
-          <h2>Visualizations</h2>
+
+        <div className="header-container">
+          <h2 className="header-title">Visualizations</h2>
 
           <div className="dis-filter">
 
@@ -251,6 +253,11 @@ const Dashboard = () => {
             </div>
 
           </div>
+        </div>
+
+          
+
+          
           
           <div className="ch1">
             <Barc barangay={selectedBarangay} year={selectedYear}/>
@@ -270,12 +277,21 @@ const Dashboard = () => {
 
         <div className="disasters-table">
 
-         <h2>List of Disasters</h2>
-
+        <div className="header-container">
+          <h2 className="header-title">List of Disasters</h2>
           <div className="dstr-search">
-            <i className="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Search..." onChange={handleSearchChange} className="search-bar"/>
+            <div className="dstr-search-container">
+              <i className="fa-solid fa-magnifying-glass"></i>
+              <input 
+                type="text" 
+                placeholder="Search..." 
+                onChange={handleSearchChange} 
+                className="search-bar"
+              />
+            </div>
           </div>
+        </div>
+
 
           <table>
               <thead>
@@ -512,9 +528,9 @@ const Dashboard = () => {
                         </div>
 
                         <div className="vm-form-group">
-                          <label><span className="icon"><i className="fa-solid fa-phone"></i></span>Camp Manager Contact No.</label>
+                          <label>Camp Manager Contact No.</label>
                           <div className="vm-input-group">
-                            
+                            <span className="icon"><i className="fa-solid fa-phone"></i></span>
                             <span className="label">{selectedDisaster.contact}</span>
                           </div>
                         </div>

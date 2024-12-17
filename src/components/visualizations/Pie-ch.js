@@ -89,9 +89,21 @@ const DonutGraph = ({ barangay, year }) => {
     setDisasterDateFilter("All");  // Reset the disaster date to "All"
   }, [disasterTypeFilter]);
 
+  const totalAffected = disasterStats.pregnantWomen + disasterStats.lactatingMothers + disasterStats.pwds + disasterStats.soloParents + disasterStats.indigenousPeople;
+
+
+  const percentages = [
+    (disasterStats.pregnantWomen / totalAffected) * 100,
+    (disasterStats.lactatingMothers / totalAffected) * 100,
+    (disasterStats.pwds / totalAffected) * 100,
+    (disasterStats.soloParents / totalAffected) * 100,
+    (disasterStats.indigenousPeople / totalAffected) * 100,
+  ];
+
+
+  const highestPercentageIndex = percentages.indexOf(Math.max(...percentages));
 
   let data;
-
 
   if (filteredDisasters.length === 0) {
     // If no data matches the filters, show a gray donut chart
@@ -227,8 +239,17 @@ const DonutGraph = ({ barangay, year }) => {
      
 
       <div className="pie-text-overlay">
-        <h2>Donut!</h2>
-        <p>Always be ready for the unexpected.</p>
+        <h2>Disaster Insights</h2>
+
+        {totalAffected === 0 ? (
+          <p>No data available for the selected filters.</p> // Show message when there's no data
+        ) : (
+          <p>
+            The most affected group by the disaster is <strong>{['Pregnant Women', 'Lactating Mothers', 'PWDs', 'Solo Parents', 'Indigenous People'][highestPercentageIndex]}</strong>,
+            with a percentage of <strong>{percentages[highestPercentageIndex].toFixed(2)}%</strong>.
+          </p>
+        )}
+
       </div>
     </div>
   );

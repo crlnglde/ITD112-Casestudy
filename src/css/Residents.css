@@ -250,8 +250,13 @@
     pointer-events: none; /* Ensures the button doesn't respond to clicks */
   }
 
+  .prev {
+    background-color: #2196F3;
+    color: white;
+}
+
   .prev:hover {
-    background-color: #e53935;
+    background-color: #1976D2;
   }
   
   /* Specific styles for Next button */

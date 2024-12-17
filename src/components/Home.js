@@ -7,6 +7,8 @@ import dswd2 from '../pic/dswd2.png';
 import dswd3 from '../pic/dswd3.jpg'; 
 import videoBackground from '../pic/vid.mp4';
 
+import Map from './visualizations/map'
+
 import { db } from "../firebase";
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 
@@ -46,7 +48,7 @@ useEffect(() => {
       setTotalResidents(total);
 
       // Calculate total families 
-      setTotalFamilies(residents.length);
+      setTotalFamilies(residentsData.length);
 
     } catch (error) {
       console.error("Error fetching residents data:", error);
@@ -100,8 +102,6 @@ useEffect(() => {
             <h1>Welcome to the Disaster <br />Monitoring System </h1>
             
             <h3>Quick Action, Timely Disaster Response</h3>
-
-            <p> This platform tracks and provides information on <br/>disaster-affected families and residents, enabling<br /> effective response and recovery efforts.</p>
               
             </div>
       </div>   
@@ -110,26 +110,29 @@ useEffect(() => {
         <div className="home-row">
           <div className="home-count-card">
             <div className="hcc-label">
-              <label>Total Residents</label>
+              <i className="fa-solid fa-people-group"></i>
+              
             </div>
-
-            <p><i className="fa-solid fa-people-group"></i>{totalResidents}</p>
+            <label>Total Residents</label>
+            <p>{totalResidents}</p>
           </div>
 
           <div className="home-count-card">
             <div className="hcc-label">
-              <label>Total Families</label>
+              <i className="fa-solid fa-people-roof"></i>
+              
             </div>
-            
-            <p><i className="fa-solid fa-people-roof"></i>{totalFamilies}</p>
+            <label>Total Families</label>
+            <p>{totalFamilies}</p>
           </div>
 
 
           {/* Display Total Disasters */}
           <div className="home-count-card">
             <div className="hcc-label">
-              <label>Total Disasters</label>
+              <i className="fa-solid fa-hurricane"></i>
             </div>
+            <label>Total Disasters</label>
             <p>{totalDisasters}</p> {/* Display the total disasters */}
           </div>
 
@@ -138,7 +141,11 @@ useEffect(() => {
       </div>
 
       <div className="home-container2">
+      
+       
+        
 
+        <Map/>
 
       </div>
 

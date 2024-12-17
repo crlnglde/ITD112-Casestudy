@@ -136,7 +136,7 @@ const BarGraph = ({ barangay, year }) => {
       <div className='bar'>
 
       <div className="bar-filter">
-          <h2>Monthly Disaster</h2>
+          <h2>Disaster Impact</h2>
 
           <div className="filters-right">
             <div className="bar-filter-container">
@@ -183,8 +183,18 @@ const BarGraph = ({ barangay, year }) => {
       
 
       <div className="bar-text-overlay">
-        <h2>Bar!</h2>
-        <p>Always be ready for the unexpected.</p>
+        <h2>Disaster Impact Overview</h2>
+        {Object.keys(affectedFamilies).length > 0 ? (
+          <p>
+            The barangay with the most affected families is <strong>
+              {Object.keys(affectedFamilies).reduce((a, b) => affectedFamilies[a] > affectedFamilies[b] ? a : b)}
+            </strong>, while the barangay with the least affected families is <strong>
+              {Object.keys(affectedFamilies).reduce((a, b) => affectedFamilies[a] < affectedFamilies[b] ? a : b)}
+            </strong>.
+          </p>
+        ) : (
+          <p>No disaster data available.</p>
+        )}
       </div>
     </div>
 

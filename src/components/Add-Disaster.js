@@ -34,6 +34,10 @@ const AddDisaster = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
 
+    const [currentPage, setCurrentPage] = useState(1); // State for current page
+    const rowsPerPage = 10;
+    const totalPages = Math.ceil(residents.length / rowsPerPage);
+
 
     //new
     const [disasterCode] = useState(`D-${Date.now()}`);
@@ -381,6 +385,24 @@ const AddDisaster = () => {
         }
     };
 
+    const displayResidents = residents.slice(
+        (currentPage - 1) * rowsPerPage,
+        currentPage * rowsPerPage
+      );
+
+    //Page ni
+    const handleNext = () => {
+        if (currentPage < totalPages) {
+        setCurrentPage(prev => prev + 1);
+        }
+    };
+
+    const handlePrev = () => {
+        if (currentPage > 1) {
+        setCurrentPage(prev => prev - 1);
+        }
+    };
+
     const Step2 = (
         <div className="residents-table">
             <div className="barangay-buttons">
@@ -416,8 +438,10 @@ const AddDisaster = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {residents.map((resident) => (
-                                    <tr key={resident.id}>
+
+                                {displayResidents.length > 0 ? (
+                                    displayResidents.map((resident, index) => (
+                                        <tr key={resident.id}>
                                         <td>{resident.Barangay}</td>
                                         <td>{resident.Purok}</td>
                                         <td>{resident.FamilyHead}</td>
@@ -429,16 +453,39 @@ const AddDisaster = () => {
                                         <td>
                                             
                                         <button className="res-submit-btn" onClick={() => handleResidentSelect(resident)}>
-                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            <i className="fa-solid fa-pen-to-square"></i>
                                         </button>
                                         </td>
                                     </tr>
-                                ))}
+                                    ))
+                                  ) : (
+                                    <tr>
+                                      <td colSpan="6">No residents found.</td>
+                                    </tr>
+                                  )}
                             </tbody>
                         </table>
                     ) : (
                         <p>No residents found for {activeBarangay}.</p>
                     )}
+
+                    <div className="res-button-container">
+                    <button 
+                        className="nav-button prev" 
+                        onClick={handlePrev}
+                        disabled={currentPage === 1}
+                    >
+                        <i className="fa-solid fa-angle-left"></i>
+                    </button>
+
+                    <button 
+                        className="nav-button next" 
+                        onClick={handleNext}
+                        disabled={currentPage === totalPages}
+                    >
+                        <i className="fa-solid fa-angle-right"></i>
+                    </button>
+                    </div>
 
 
                     {/*new*/}

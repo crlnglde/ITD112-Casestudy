@@ -2,19 +2,18 @@ import React, { useEffect, useState, useMemo, useCallback  } from "react";
 import { MapContainer, TileLayer, GeoJSON,  CircleMarker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import iliganData from '../../data/iligan.json'; 
-import "../../css/visualizations/Iligan.css";
+import "../../css/visualizations/map.css";
 
 import { db } from "../../firebase";
 import { collection, getDocs } from 'firebase/firestore';
 
-const ChoroplethGraph = ({barangay, year }) => {
+const ChoroplethGraph = () => {
   const [disasterTypeFilter, setDisasterTypeFilter] = useState("All");
   const [disasterMonthFilter, setDisasterMonthFilter] = useState("All");
   const [disasters, setDisasters] = useState([]);
   const [filteredDisastersByBarangay, setFilteredDisastersByBarangay] = useState({});
-
-
-
+  const barangay = "All";
+  const year= "All";
 
   useEffect(() => {
       const fetchDisasters = async () => {
@@ -31,14 +30,10 @@ const ChoroplethGraph = ({barangay, year }) => {
     }, []);
 
 
-
-
     const allMonths = [
       "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"
     ];
-
-
 
 
     const filteredDisasters = useMemo(() => {
@@ -54,8 +49,6 @@ const ChoroplethGraph = ({barangay, year }) => {
         );  
       });
     }, [disasters, barangay, year, disasterTypeFilter, disasterMonthFilter, allMonths]);
-
-
 
 
     const countFilteredDisastersByBarangayAndType = (filteredDisastersList) => {
@@ -76,15 +69,10 @@ const ChoroplethGraph = ({barangay, year }) => {
    
     useEffect(() => {
       const countByBarangayAndType = countFilteredDisastersByBarangayAndType(filteredDisasters);
-      if (JSON.stringify(countByBarangayAndType) !== JSON.stringify(filteredDisastersByBarangay)) {
-        setFilteredDisastersByBarangay(countByBarangayAndType);
-      }
-    }, [filteredDisasters, filteredDisastersByBarangay]);
-    
+      setFilteredDisastersByBarangay(countByBarangayAndType); // Set the state with the counts
+    }, [filteredDisasters]);
    
    
-
-
 
 
   // Define a function to style each feature
@@ -120,8 +108,6 @@ const ChoroplethGraph = ({barangay, year }) => {
   };
 
 
-
-
   // Define a function to get color based on density (or other property)
   const getColorForBubble = (disasterType) => {
     return disasterType === "Fire Incident"
@@ -131,13 +117,11 @@ const ChoroplethGraph = ({barangay, year }) => {
       : disasterType === "Earthquake"
       ? 'rgba(255, 159, 64, 0.7)'
       : disasterType === "Typhoon"
-      ? 'rgba(255, 160, 173, 0.7)'
+      ? 'rgba(153, 102, 255, 0.7)'
       : disasterType === "Landslide"
-      ? 'rgba(75, 192, 192, 0.7)'
-      : 'rgba(0, 0, 0, 0.7)';
+      ? 'rgba(139,69,19)'
+      : 'rgba(75, 192, 192, 0.7)';  // Default color for any other disaster type
   };
-
-
 
 
   const getMarkerSize = (count) => {
@@ -145,86 +129,28 @@ const ChoroplethGraph = ({barangay, year }) => {
   };
 
 
-
-
   const handleDisasterTypeChange = (event) => {
     setDisasterTypeFilter(event.target.value);
   };
 
+
   useEffect(() => {
-    if (Object.keys(filteredDisastersByBarangay).length !== 0) {
-      setFilteredDisastersByBarangay({});
-    }
+    // Reset filtered disasters and barangay counts when disaster type changes
+    setFilteredDisastersByBarangay({});
   }, [disasterTypeFilter]);
-  
-
-  const calculateCentroid = (geometry) => {
-    let coordinates = [];
-    if (geometry.type === "Polygon") {
-      coordinates = geometry.coordinates[0];
-    } else if (geometry.type === "MultiPolygon") {
-      coordinates = geometry.coordinates[0][0];
-    }
-
-
-    let totalLat = 0,
-      totalLng = 0,
-      count = coordinates.length;
-
-
-    coordinates.forEach(([lng, lat]) => {
-      totalLat += lat;
-      totalLng += lng;
-    });
-
-
-    return [totalLat / count, totalLng / count]; // [lat, lng]
-  };
-
-
 
   return (
-    <div className="choropleth-map-container">
+    <div className="choropleth-map-container1">
       
 
-      <div className='map'>
+      <div className='map1'>
 
-        <div className="map-filter">
-
-            <h2>Iligan City</h2>
-
-          <div className="filters-right">
-            <div className="map-filter-container">
-              {/* Dropdown for Disaster Date */}
-              <select id="disasterType" name="disasterType" onChange={(e) => setDisasterTypeFilter(e.target.value)} value={disasterTypeFilter}>
-                  <option value="All">All</option>
-                  <option value="Fire Incident">Fire Incident</option>
-                  <option value="Flood">Flood</option>
-                  <option value="Landslide">Landslide</option>
-                  <option value="Earthquake">Earthquake</option>
-                  <option value="Typhoon">Typhoon</option>
-                </select>
-
-            </div>
-
-            <div className="map-filter-container">
-                <label htmlFor="disasterMonth">Select Disaster Month: </label>
-                <select id="disasterMonth" name="disasterMonth" onChange={(e) => setDisasterMonthFilter(e.target.value)}  value={disasterMonthFilter}>
-                  <option value="All">All</option>
-                  {allMonths.map((date, index) => (
-                    <option key={index} value={date}>{date}</option>
-                  ))}
-                </select>
-            </div>
-          </div>
-
-        </div>
-
-        <div className="map-wrapper">
+        <div className="map-wrapper1">
+          <h2><i class="fa-solid fa-location-dot"></i> Iligan City, Philippines</h2>
           <MapContainer
             style={{ height: '100%', width: '100%' }}
-            center={[8.228, 124.370]} // Approximate center of Iligan City
-            zoom={10.5}  // Adjust the zoom level for wider view
+            center={[8.230, 124.365]} // Approximate center of Iligan City
+            zoom={12}  // Adjust the zoom level for wider view
             scrollWheelZoom={false}
             minZoom={8} // Set minimum zoom level
             maxZoom={15} 
@@ -240,30 +166,38 @@ const ChoroplethGraph = ({barangay, year }) => {
               const barangayData = iliganData.features.find(
                 (feature) => feature.properties.adm4_en === barangay
               );
-
-
+            
               if (barangayData) {
-                const centroid = calculateCentroid(barangayData.geometry);
+                // Extract the coordinates for the barangay
+                let coordinates;
+                if (barangayData.geometry.type === "Polygon") {
+                  coordinates = barangayData.geometry.coordinates[0][0]; // First coordinate of the first ring
+                } else if (barangayData.geometry.type === "MultiPolygon") {
+                  coordinates = barangayData.geometry.coordinates[0][0][0]; // First coordinate of the first polygon's first ring
+                }
 
 
-                return Object.entries(disasterTypes).map(([disasterType, count]) => (
-                  <CircleMarker
-                    key={`${barangay}-${disasterType}`}
-                    center={centroid}
-                    radius={getMarkerSize(count)}
-                    color={getColorForBubble(disasterType)}
-                    fillColor={getColorForBubble(disasterType)}
-                    fillOpacity={0.5}
-                  >
-                    <Popup>
-                      <strong>{barangay}</strong>
-                      <br />
-                      Disaster Type: {disasterType}
-                      <br />
-                      Disaster Count: {count}
-                    </Popup>
-                  </CircleMarker>
-                ));
+                if (coordinates) {
+                  return (
+                    // Loop through each disaster type for the barangay
+                    Object.entries(disasterTypes).map(([disasterType, count]) => (
+                      <CircleMarker
+                        key={`${barangay}-${disasterType}`}
+                        center={[coordinates[1], coordinates[0]]} // Leaflet expects [lat, lng]
+                        radius={getMarkerSize(count)} // Size based on disaster count
+                        color={getColorForBubble(disasterType)} // Color based on disaster type
+                        fillColor={getColorForBubble(disasterType)}
+                        fillOpacity={0.5}
+                      >
+                        <Popup>
+                          <strong>{barangay}</strong><br />
+                          Disaster Type: {disasterType}<br />
+                          Disaster Count: {count}
+                        </Popup>
+                      </CircleMarker>
+                    ))
+                  );
+                }
               }
               return null;
               })}
@@ -272,39 +206,6 @@ const ChoroplethGraph = ({barangay, year }) => {
         </div>
       </div>
       
-
-      <div className="map-text-overlay">
-        <h2>Disaster Insights</h2>
-        <p>
-          {filteredDisasters.length > 0 ?
-            (disasterTypeFilter === "All" ?
-              <span>
-                There is a noticeable concentration of <strong style={{ color:"white"}}>disasters</strong> in specific barangays.
-                You may want to focus on these areas for disaster preparedness and response strategies. Stay alert and be prepared for the unexpected!
-              </span> :
-              <span>
-              <strong style={{ color: getColorForBubble(disasterTypeFilter) }}>
-                {disasterTypeFilter}
-              </strong> shows a noticeable concentration in the following barangays:
-              <strong>
-                {Object.entries(filteredDisastersByBarangay)
-                  .map(([barangay, disasterTypes]) => {
-                    if (disasterTypes[disasterTypeFilter] > 0) {
-                      return barangay;
-                    }
-                    return null;
-                  })
-                  .filter(Boolean)
-                  .join(", ")
-                }
-              </strong>. You may want to focus on these areas for disaster preparedness and response strategies. Stay alert and be prepared for the unexpected!
-            </span>            
-            ) :
-            "No data available for the selected filters. Please adjust the criteria for more insights."
-          }
-        </p>
-
-      </div>
 
     </div>
   );

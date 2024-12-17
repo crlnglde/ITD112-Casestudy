@@ -91,7 +91,7 @@
 
   .dis-filter{
     display: flex;
-    padding: 20px;
+    padding: 0 0 5px 0;
     gap: 10px;
   }
 
@@ -101,10 +101,13 @@
       border-radius: 5px;
       gap: 10px;
       padding: 0 10px 0 10px;
+      background-color: #0A194E;
+      
     }
     
     .dis-filter-container label {
-      font-weight: bold;
+      font-weight:300;
+      color: white;
     }
     
     .dis-filter-container select {
@@ -112,8 +115,10 @@
       font-size: 15px;
       border: none;
       outline: none;
-      background-color: #fff;
+      background-color: #6ab1ea00;
       transition: border-color 0.3s ease;
+      color: white !important;
+      
     }
 
     .dis-filter-container option {
@@ -123,6 +128,7 @@
       outline: none;
       background-color: #fff;
       transition: border-color 0.3s ease;
+      color: black !important;
     }
     
     
@@ -147,6 +153,85 @@
     margin: 0;
     border-bottom: 2px solid #0A194E;
   }
+  
+
+  
+
+  .header-container {
+    display: flex; /* Use Flexbox */
+    justify-content: space-between; /* Place h2 on the left and search bar on the right */
+    align-items: center; /* Vertically center items */
+    position: relative; /* For the line pseudo-element */
+    padding-bottom: 10px; /* Add some space for the line */
+  }
+  
+  .header-title {
+    margin: 0; /* Remove default margin */
+    font-size:25px;
+   
+  }
+  
+  .dstr-search {
+    display: flex;
+    padding: 0 0 5px 0;
+    gap: 10px;
+  }
+
+  .dstr-search-container{
+    display: flex;
+    align-items: center;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    display: flex;
+    margin-left: auto;
+    padding: 0 10px 0 10px;
+  }
+  
+  .dstr-search input {
+    width: 300px;
+    padding: 8px;
+    border: none;
+    font-size: 16px;
+    background-color:#ffffff00;
+    outline: none; 
+  }
+  
+  .dstr-search i {
+    padding: 8px;
+  }
+  
+  /* Line below */
+  .header-container::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%; /* Full width */
+    height: 2px; /* Thickness of the line */
+    background-color: #0A194E; /* Line color */
+  }
+
+  .dash-viewmore-btn {
+    background-color: transparent;  /* Using transparent instead of #00000000 */
+    border: 2px solid transparent;  /* Border with no visible color */
+    color: #333;  /* Set a text color for the button */
+    padding: 10px 20px;  /* Adding some padding to make the button more clickable */
+    font-size: 16px;  /* Adjusting font size */
+    border-radius: 5px;  /* Slightly rounded corners */
+    cursor: pointer;  /* Change cursor to pointer to show it's clickable */
+    transition: background-color 0.3s, transform 0.2s ease, border-color 0.2s ease, color 0.3s ease; /* Smoother transition for multiple properties */
+  }
+
+  .dash-viewmore-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);  /* Light background color on hover */
+    border-color: #666;  /* Add subtle border color when hovered */
+    color: #000;  /* Change text color on hover for better contrast */
+    transform: translateY(-2px);  /* Slight lift effect on hover */
+  }
+
+  
+
+
 
   .dstr-modal-content {
     
@@ -447,6 +532,10 @@
 .disasters-table{
   padding: 20px;
   height: 100%;
+}
+
+.disasters-table table{
+  margin-top: 20px;
 }
 
 .disasters-table p {

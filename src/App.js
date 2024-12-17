@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useLocation, Navigate  } from "react-router-dom";
 import { ToastContextProvider } from "./context/ToastContextProvider";
 
 import Sidebar from "./components/Sidebar";
@@ -51,7 +51,7 @@ function App() {
             setIsSidebarMinimized={setIsSidebarMinimized} // Pass the setter here
           >
             <Routes>
-              <Route path="/" element={<Landing />} />
+              <Route path="/" element={<Navigate to="/home" />} />
               <Route path="/home" element={<Home />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/residents" element={<Residents />} />

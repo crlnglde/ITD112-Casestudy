@@ -26,10 +26,10 @@
           <h1>{currentPageName}</h1>
         </div>
           
-        <div className="search"> 
+        {/*<div className="search"> 
           <i className="fa-solid fa-magnifying-glass"></i>
           <input type="text" placeholder="Search..." />
-        </div>
+        </div>*/}
 
         <div className="notifications">
           <i className="fa-regular fa-bell"></i>
